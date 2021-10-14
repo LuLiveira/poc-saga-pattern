@@ -1,0 +1,36 @@
+version: '3'
+services:
+  purchase-service:
+    hostname: purchase-service
+    container_name: purchase-service
+    image: luliveira/purchase-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    links: 
+      - rabbitmq
+  payment-service:
+    hostname: payment-service
+    container_name: payment-service
+    image: luliveira/payment-service
+    # depends_on:
+    #   - rabbitmq
+    #   - purchase
+    depends_on:
+      purchase-service:
+        condition: service_started
+    links:
+      - rabbitmq
+  rabbitmq:
+    # command: bash -c "apt-get update && apt-get -y install curl"
+    hostname: rabbitmq
+    container_name: rabbitmq
+    image: luliveira/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:15672"]
+        interval: 10s
+        timeout: 10s
+        retries: 5

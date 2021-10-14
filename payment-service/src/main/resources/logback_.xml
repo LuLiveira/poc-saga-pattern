@@ -1,0 +1,15 @@
+<configuration>
+    <property resource="application.properties" />
+    <contextName>${spring.application.name}</contextName>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Não faça isso em casa! Use o encoder net.logstash.logback.encoder.LoggingEventCompositeJsonEnconder para gerar o log em JSON ;) -->
+            <!-- Do not do this at your home! Use for enconde your JSON log the net.logstash.logback.encoder.LoggingEventCompositeJsonEnconder ;) -->
+            <pattern>{ "moment": "%d{HH:mm}", "app": "%contextName", "level": "%-5level", "message": "%msg"}%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
