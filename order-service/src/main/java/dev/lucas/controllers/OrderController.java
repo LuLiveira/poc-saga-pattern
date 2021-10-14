@@ -19,6 +19,6 @@ public class OrderController {
     @GetMapping
     public String generate() throws JsonProcessingException, InterruptedException {
         producer.produce();
-        return "OK!";
+        return "Generated Order!";
     }
 }

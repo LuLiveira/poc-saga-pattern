@@ -3,6 +3,7 @@ package dev.lucas.consumers;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Order {
+
     @JsonProperty("uuid")
     private String uuid;
 

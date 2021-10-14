@@ -21,18 +21,16 @@ public class OrderConsumer {
 
     private final Logger LOGGER = LoggerFactory.getLogger(OrderConsumer.class);
 
-
     public OrderConsumer(RabbitTemplate rabbitTemplate, OrderRepository repository) {
         this.rabbitTemplate = rabbitTemplate;
         this.repository = repository;
     }
 
-    @RabbitListener(queues = {AmqpConfiguration.QUEUE, AmqpConfiguration.ORDER_CANCELED})
+    @RabbitListener(queues = {AmqpConfiguration.QUEUE_ORDER_CANCELED, AmqpConfiguration.QUEUE_PAYMENT_CANCELED})
     public void consume(@Payload String payload) throws JsonProcessingException {
         Order order = new ObjectMapper().readValue(payload, Order.class);
         LOGGER.info("Consumindo ordem que teve o pagamento recusado ou sem estoque: {}", order.getUuid());
 
-        //TODO logica de cancelar o pedido
         repository.delete(order);
     }
 

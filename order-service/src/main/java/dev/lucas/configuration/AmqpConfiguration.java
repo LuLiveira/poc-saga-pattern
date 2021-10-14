@@ -12,37 +12,45 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class AmqpConfiguration {
 
-    public static final String EXCHANGE = "order";
+    public static final String TOPIC_EXCHANGE_ORDER = "order";
     public static final String ROUTING_KEY = "order";
-    public static final String QUEUE = "payment.canceled";
-    public static final String ORDER_CANCELED = "order.canceled";
-    public static final String EXCHANGE_STORAGE = "storage";
+    public static final String QUEUE_PAYMENT_CANCELED = "payment.canceled";
+    public static final String QUEUE_ORDER_CANCELED = "order.canceled";
+    public static final String FANOUT_EXCHANGE_STORAGE = "storage";
 
 
     @Bean
     @Primary
     public Exchange exchange() {
-        return ExchangeBuilder.topicExchange(EXCHANGE).durable(true).build();
+        return ExchangeBuilder.topicExchange(TOPIC_EXCHANGE_ORDER).durable(true).build();
     }
 
     @Bean
     @Primary
     public Queue queue() {
-        return QueueBuilder.durable(QUEUE)
+        return QueueBuilder.durable(QUEUE_PAYMENT_CANCELED)
                 .build();
+    }
+
+    @Bean
+    public Binding binding(Exchange exchange, Queue queue) {
+        return BindingBuilder.bind(queue)
+                .to(exchange)
+                .with(ROUTING_KEY)
+                .noargs();
     }
 
     @Bean
     @Qualifier("exchangeFanout")
     public Exchange exchangeFanout() {
-        return ExchangeBuilder.fanoutExchange(EXCHANGE_STORAGE)
+        return ExchangeBuilder.fanoutExchange(FANOUT_EXCHANGE_STORAGE)
                 .durable(true).build();
     }
 
     @Bean
     @Qualifier("canceledQueue")
     public Queue canceledQueue() {
-        return QueueBuilder.durable(ORDER_CANCELED)
+        return QueueBuilder.durable(QUEUE_ORDER_CANCELED)
                 .build();
     }
 
@@ -54,13 +62,6 @@ public class AmqpConfiguration {
                 .noargs();
     }
 
-    @Bean
-    public Binding binding(Exchange exchange, Queue queue) {
-        return BindingBuilder.bind(queue)
-                .to(exchange)
-                .with(ROUTING_KEY)
-                .noargs();
-    }
 
     @Bean
     @Profile("docker")

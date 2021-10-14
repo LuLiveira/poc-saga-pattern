@@ -37,7 +37,7 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Purchase{" +
+        return "Order{" +
                 "uuid='" + uuid + '\'' +
                 "status='" + status + '\'' +
                 '}';

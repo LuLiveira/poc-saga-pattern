@@ -19,6 +19,8 @@ public class OrderProducer {
 
     private final RabbitTemplate producer;
 
+    private final static String ROUTING_KEY = "order.received";
+
     public OrderProducer(OrderRepository repository, RabbitTemplate producer) {
         this.repository = repository;
         this.producer = producer;
@@ -27,7 +29,7 @@ public class OrderProducer {
     public void produce() throws JsonProcessingException, InterruptedException {
         Order order = repository.save(new Order());
         String json = new ObjectMapper().writeValueAsString(order);
-        producer.convertAndSend(AmqpConfiguration.EXCHANGE, "order.received", json);
+        producer.convertAndSend(AmqpConfiguration.TOPIC_EXCHANGE_ORDER, this.ROUTING_KEY, json);
         LOGGER.info("Sucesso na criação da Order: {}", order.getUuid());
     }
 }

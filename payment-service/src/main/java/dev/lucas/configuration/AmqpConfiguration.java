@@ -12,38 +12,46 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class AmqpConfiguration {
 
-    public static final String EXCHANGE = "order";
-    public static final String ORDER_RECEIVED = "order.received";
-    public static final String EXCHANGE_STORAGE = "storage";
-    public static final String ORDER_CANCELED = "order.canceled.payment";
+    public static final String TOPIC_EXCHANGE_ORDER = "order";
+    public static final String QUEUE_ORDER_RECEIVED = "order.received";
+    public static final String FANOUT_EXCHANGE_STORAGE = "storage";
+    public static final String QUEUE_ORDER_CANCELED = "order.canceled.payment";
     public static final String ROUTING_KEY = "order.received";
 
 
     @Bean
     @Primary
     public Exchange exchange() {
-        return ExchangeBuilder.topicExchange(EXCHANGE)
+        return ExchangeBuilder.topicExchange(TOPIC_EXCHANGE_ORDER)
                 .durable(true).build();
     }
 
     @Bean
     @Primary
     public Queue receiveQueue() {
-        return QueueBuilder.durable(ORDER_RECEIVED)
+        return QueueBuilder.durable(QUEUE_ORDER_RECEIVED)
                 .build();
+    }
+
+    @Bean
+    public Binding bindingOrderReceived(Exchange exchange, Queue queue) {
+        return BindingBuilder.bind(queue)
+                .to(exchange)
+                .with(ROUTING_KEY)
+                .noargs();
     }
 
     @Bean
     @Qualifier("exchangeFanout")
     public Exchange exchangeFanout() {
-        return ExchangeBuilder.fanoutExchange(EXCHANGE_STORAGE)
+        return ExchangeBuilder.fanoutExchange(FANOUT_EXCHANGE_STORAGE)
                 .durable(true).build();
     }
 
     @Bean
     @Qualifier("canceledQueue")
     public Queue canceledQueue() {
-        return QueueBuilder.durable(ORDER_CANCELED)
+        return QueueBuilder.durable(QUEUE_ORDER_CANCELED)
                 .build();
     }
 
@@ -52,14 +60,6 @@ public class AmqpConfiguration {
         return BindingBuilder.bind(queue)
                 .to(exchange)
                 .with("")
-                .noargs();
-    }
-
-    @Bean
-    public Binding bindingOrderReceived(Exchange exchange, Queue queue) {
-        return BindingBuilder.bind(queue)
-                .to(exchange)
-                .with(ROUTING_KEY)
                 .noargs();
     }
 

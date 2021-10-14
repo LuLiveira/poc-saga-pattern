@@ -1,6 +1,5 @@
 package dev.lucas.repositories;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;

@@ -10,18 +10,18 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ErrorStorageProducer {
+public class StorageProducer {
 
     private final RabbitTemplate rabbitTemplate;
 
-    private final Logger LOGGER = LoggerFactory.getLogger(ErrorStorageProducer.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(StorageProducer.class);
 
-    public ErrorStorageProducer(RabbitTemplate rabbitTemplate) {
+    public StorageProducer(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
     public void produce(Order order) throws JsonProcessingException {
         LOGGER.info("Erro no estoque da Order: {}", order.getUuid());
-        rabbitTemplate.convertAndSend(AmqpConfiguration.EXCHANGE_STORAGE, "", new ObjectMapper().writeValueAsString(order));
+        rabbitTemplate.convertAndSend(AmqpConfiguration.FANOUT_EXCHANGE_STORAGE, "", new ObjectMapper().writeValueAsString(order));
     }
 }

@@ -12,28 +12,29 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class AmqpConfiguration {
 
-    public static final String EXCHANGE_ORDER = "order";
-    public static final String EXCHANGE_STORAGE = "storage";
-    public static final String QUEUE = "payment.approved";
+    public static final String TOPIC_EXCHANGE_ORDER = "order";
+    public static final String FANOUT_EXCHANGE_STORAGE = "storage";
+    public static final String QUEUE_PAYMENT_APPROVED = "payment.approved";
     public static final String ROUTING_KEY = "payment.approved";
 
-    @Bean
-    @Qualifier("exchange")
-    public Exchange exchange() {
-        return ExchangeBuilder.topicExchange(EXCHANGE_ORDER)
-                .durable(true).build();
-    }
 
     @Bean
     @Primary
     public Exchange exchangeStorage() {
-        return ExchangeBuilder.fanoutExchange(EXCHANGE_STORAGE)
+        return ExchangeBuilder.fanoutExchange(FANOUT_EXCHANGE_STORAGE)
+                .durable(true).build();
+    }
+
+    @Bean
+    @Qualifier("exchange")
+    public Exchange exchange() {
+        return ExchangeBuilder.topicExchange(TOPIC_EXCHANGE_ORDER)
                 .durable(true).build();
     }
 
     @Bean
     public Queue queue() {
-        return QueueBuilder.durable(QUEUE)
+        return QueueBuilder.durable(QUEUE_PAYMENT_APPROVED)
                 .build();
     }
 
