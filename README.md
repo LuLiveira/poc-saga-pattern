@@ -51,4 +51,5 @@ A idéia do projeto é representar um fluxo de compra onde temos 3 serviços, or
 
 Caso algo não tenha ficado claro ou existam sugestões, dicas, etc... segue o meu [Linkedin](https://www.linkedin.com/in/lucas-oliveira1/)
 
+**Não tome a estrutura/arquitura desse projeto como base pois os mesmos não foram o foco no momento do desenvolvimento**
 
